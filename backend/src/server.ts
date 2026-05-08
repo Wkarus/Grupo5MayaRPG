@@ -1,10 +1,12 @@
 import { app } from "./app";
 import { env } from "./config/env";
-import { checkDatabaseConnection } from "./db/mysql";
+import { ensureExerciseSchema } from "./db/ensureExerciseSchema";
+import { checkDatabaseConnection, pool } from "./db/mysql";
 
 async function bootstrap() {
   try {
     await checkDatabaseConnection();
+    await ensureExerciseSchema(pool); // tabelas exercises + checkins
   } catch (error) {
     if (!env.ALLOW_START_WITHOUT_DB) {
       console.error("Falha ao iniciar backend:", error);

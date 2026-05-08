@@ -53,4 +53,9 @@ public class ApiClient {
     public static AgendaService agendaService(Context context) {
         return getRetrofit(context).create(AgendaService.class);
     }
+
+    /** API de exercicios (lista + check-in) */
+    public static ExerciseService exerciseService(Context context) {
+        return getRetrofit(context).create(ExerciseService.class);
+    }
 }

@@ -83,4 +83,9 @@
     <string name="agendamento_confirmado_toast">Agendamento confirmado.</string>
     <string name="whatsapp_maya_numero" translatable="false"></string>
     <string name="whatsapp_msg_confirmacao_agendamento">Ola Maya! Confirmo meu agendamento no app Maya RPG:\n%1$s as %2$s\n(ref. data: %3$s)</string>
+    <string name="exercicios_lista_vazia">Nenhum exercicio disponivel da API.</string>
+    <string name="exercicios_erro_carregar">Nao foi possivel carregar exercicios. Verifique a rede e o login.</string>
+    <string name="registrar_execucao">Registrar execucao (check-in)</string>
+    <string name="exercicio_checkin_ok">Execucao registrada!</string>
+    <string name="exercicio_checkin_erro">Nao foi possivel registrar. Tente novamente.</string>
 </resources>

@@ -23,6 +23,11 @@ const commentModerationSchema = z.object({
   resposta: z.string().optional()
 });
 
+const exerciseCreateSchema = z.object({
+  titulo: z.string().min(2).max(255),
+  descricao: z.string().max(1000).optional()
+});
+
 export const adminRouter = Router();
 
 async function countFromQuery(sql: string) {
@@ -129,6 +134,32 @@ adminRouter.patch("/comments/:id/moderar", adminActionLogger("ADMIN_COMMENT_MODE
       id
     ]);
     return res.json({ message: "Comentario moderado com sucesso." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Painel: ver exercicios cadastrados
+adminRouter.get("/exercises", async (_req, res, next) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT id, titulo, descricao FROM exercises ORDER BY id ASC"
+    );
+    return res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Painel: criar novo exercicio (vai para a mesma tabela que o app le)
+adminRouter.post("/exercises", adminActionLogger("ADMIN_EXERCISE_CREATE"), async (req, res, next) => {
+  try {
+    const body = exerciseCreateSchema.parse(req.body);
+    await pool.query("INSERT INTO exercises (titulo, descricao) VALUES (?, ?)", [
+      body.titulo.trim(),
+      body.descricao?.trim() ?? null
+    ]);
+    return res.status(201).json({ message: "Exercicio criado." });
   } catch (error) {
     next(error);
   }

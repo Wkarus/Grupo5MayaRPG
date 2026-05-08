@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import { authRouter } from "./routes/auth.routes";
+import { exercisesRouter } from "./routes/exercises.routes";
 import { publicRouter } from "./routes/public.routes";
 import { adminRouter } from "./routes/admin.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
@@ -27,12 +28,17 @@ app.get("/", (_req, res) => {
     login: "POST /auth/login",
     firebaseLogin: "POST /auth/firebase",
     publicados: "GET /posts",
-    agenda: "GET /agenda/disponivel"
+    agenda: "GET /agenda/disponivel",
+    exercicios: "GET /exercises (auth)",
+    checkin: "POST /exercises/:id/checkin (auth)",
+    historicoExercicios: "GET /me/exercise-checkins (auth)",
+    adminExercicios: "GET|POST /admin/exercises (ADMIN)"
   });
 });
 
 app.use("/auth", authRouter);
 app.use("/", publicRouter);
+app.use("/", exercisesRouter);
 app.use("/admin", requireAuth, requireRole("ADMIN"), adminRouter);
 
 app.use(notFoundHandler);

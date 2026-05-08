@@ -52,78 +52,47 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
                 android:background="@drawable/bg_card"
                 android:orientation="vertical"
                 android:padding="12dp">
 
                 <TextView
+                    android:id="@+id/tvExerciseDetailTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/ex_1_fortalecimento_pernas"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="10dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/ex_1_fortalecimento_pernas"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder_exercise_image" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="12dp">
 
                 <TextView
+                    android:id="@+id/tvExerciseDetailDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/ex_2_fortalecimento_quadril"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="4dp"
                     android:textColor="@color/text_primary"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="14dp"
                     android:adjustViewBounds="true"
-                    android:contentDescription="@string/ex_2_fortalecimento_quadril"
+                    android:contentDescription="@string/exercicio_tela_detalhe"
                     android:scaleType="centerCrop"
                     android:src="@drawable/placeholder_exercise_image" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="12dp">
 
                 <TextView
+                    android:id="@+id/btnRegistrarExecucao"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ex_3_fortalecimento_articular"
-                    android:textColor="@color/text_primary"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_button_primary"
+                    android:gravity="center"
+                    android:text="@string/registrar_execucao"
+                    android:textColor="@color/text_on_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="10dp"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/ex_3_fortalecimento_articular"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/placeholder_exercise_image" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

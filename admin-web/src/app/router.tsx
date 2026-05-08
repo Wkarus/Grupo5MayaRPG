@@ -5,6 +5,7 @@ import { AgendaPage } from "../pages/Agenda/AgendaPage";
 import { ComentariosPage } from "../pages/Comentarios/ComentariosPage";
 import { DashboardPage } from "../pages/Dashboard/DashboardPage";
 import { LoginPage } from "../pages/Login/LoginPage";
+import { ExerciciosPage } from "../pages/Exercicios/ExerciciosPage";
 import { PostsPage } from "../pages/Posts/PostsPage";
 
 export const router = createBrowserRouter([
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
           { path: "/", element: <Navigate to="/dashboard" replace /> },
           { path: "/dashboard", element: <DashboardPage /> },
           { path: "/posts", element: <PostsPage /> },
+          { path: "/exercicios", element: <ExerciciosPage /> },
           { path: "/agenda", element: <AgendaPage /> },
           { path: "/comentarios", element: <ComentariosPage /> }
         ]
