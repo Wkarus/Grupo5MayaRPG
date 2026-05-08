@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.mayarpg.BuildConfig;
 import com.example.mayarpg.network.services.AgendaService;
 import com.example.mayarpg.network.services.AuthService;
+import com.example.mayarpg.network.services.ExerciseService;
 import com.example.mayarpg.network.services.PostsService;
 
 import okhttp3.OkHttpClient;
