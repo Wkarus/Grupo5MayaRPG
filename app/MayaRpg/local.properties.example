@@ -1,0 +1,13 @@
+# Copie este ficheiro para `local.properties` (na mesma pasta) e ajuste.
+# O ficheiro real e ignorado pelo Git.
+
+## Caminho da SDK Android (Android Studio preenche ao abrir o projeto)
+# sdk.dir=C\:\\Users\\SEU_USUARIO\\AppData\\Local\\Android\\Sdk
+
+## URL base da API Express (obrigatorio barra final para o Retrofit)
+# Emulador apontando para o PC:
+# MAYA_API_BASE_URL=http://10.0.2.2:8080/
+# Telefone na mesma rede Wi-Fi (troque pelo IP do PC; ipconfig):
+# MAYA_API_BASE_URL=http://192.168.1.100:8080/
+# Docker Compose deste repo (API no host na porta 8081):
+# MAYA_API_BASE_URL=http://192.168.1.100:8081/

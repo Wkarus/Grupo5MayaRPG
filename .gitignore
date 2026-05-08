@@ -1,0 +1,41 @@
+# Dependências Node
+node_modules/
+
+# Variáveis de ambiente (nunca commitar segredos)
+.env
+.env.*
+!.env.example
+
+# Build / compilados — TS / Nest / Express
+dist/
+**/dist/
+
+# IDE JetBrains / IntelliJ / Android Studio
+.idea/
+*.iml
+
+# Android
+**/build/
+**/.gradle/
+**/local.properties
+**/captures/
+*.apk
+*.aab
+*.keystore
+!**/debug.keystore
+
+# Logs / tempo de execução
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testes / cobertura
+coverage/
+
+# Vite / ferramentas locais
+admin-web/dist/

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="screen_background">#39BCD2</color>
+    <color name="button_green">#00D084</color>
+    <color name="brand_primary">#0693E3</color>
+    <color name="primary">#39BCD2</color>
+    <color name="primary_dark">#0693E3</color>
+    <color name="primary_light">#8ED1FC</color>
+    <color name="secondary">#00D084</color>
+    <color name="secondary_soft">#7BDCB5</color>
+    <color name="danger">#E53935</color>
+    <color name="surface">#F4F6F8</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_on_primary">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

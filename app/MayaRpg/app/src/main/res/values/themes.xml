@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Base.Theme.MayaRpg" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorSecondary">@color/button_green</item>
+        <item name="colorTertiary">@color/button_green</item>
+        <item name="android:colorBackground">@color/surface</item>
+    </style>
+
+    <style name="Theme.MayaRpg" parent="Base.Theme.MayaRpg" />
+</resources>

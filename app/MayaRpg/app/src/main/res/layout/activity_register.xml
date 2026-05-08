@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="72dp">
+
+        <TextView
+            android:id="@+id/tvLabelNome"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:text="@string/label_nome"
+            android:textColor="@color/text_on_primary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/etNome"
+            android:layout_width="245dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input"
+            android:textColor="@color/black"
+            android:elevation="4dp"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLabelNome" />
+
+        <TextView
+            android:id="@+id/tvLabelEmail"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_email"
+            android:textColor="@color/text_on_primary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etNome" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="245dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input"
+            android:textColor="@color/black"
+            android:elevation="4dp"
+            android:inputType="textEmailAddress"
+            android:paddingHorizontal="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLabelEmail" />
+
+        <TextView
+            android:id="@+id/tvLabelSenha"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_senha"
+            android:textColor="@color/text_on_primary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEmail" />
+
+        <EditText
+            android:id="@+id/etSenhaCadastro"
+            android:layout_width="245dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input"
+            android:textColor="@color/black"
+            android:elevation="4dp"
+            android:inputType="textPassword"
+            android:paddingHorizontal="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLabelSenha" />
+
+        <TextView
+            android:id="@+id/tvLabelConfirmarSenha"
+            android:layout_width="245dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/label_confirmar_senha"
+            android:textColor="@color/text_on_primary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etSenhaCadastro" />
+
+        <EditText
+            android:id="@+id/etConfirmarSenha"
+            android:layout_width="245dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_input"
+            android:textColor="@color/black"
+            android:elevation="4dp"
+            android:inputType="textPassword"
+            android:paddingHorizontal="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLabelConfirmarSenha" />
+
+        <Button
+            android:id="@+id/btnConcluirCadastro"
+            android:layout_width="140dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_button_green"
+            android:backgroundTint="@null"
+            android:text="@string/btn_cadastro"
+            android:textAllCaps="false"
+            android:textColor="@color/text_on_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:backgroundTint="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etConfirmarSenha" />
+
+        <TextView
+            android:id="@+id/tvLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/ja_tem_cadastro"
+            android:textColor="@color/text_on_primary"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnConcluirCadastro" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

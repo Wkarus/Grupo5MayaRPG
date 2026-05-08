@@ -1,0 +1,107 @@
+name: adminmaya
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: adminmaya_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: maya_rpg
+    # Host 3307: evita choque com outro MySQL na maquina (ex.: outro compose na 3306).
+    # Dentro da rede Docker os servicos continuam a usar mysql:3306 .
+    ports:
+      - "3307:3306"
+    volumes:
+      - adminmaya_mysql_data:/var/lib/mysql
+      - ./docker/mysql-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "127.0.0.1",
+          "-uroot",
+          "-p123456",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+
+  # API Express — para login do app Android com Firebase (JWT + MySQL), adicione no servico abaixo:
+  # volumes: ./backend/firebase-service-account.json -> /app/firebase-service-account.json:ro
+  # environment: FIREBASE_SERVICE_ACCOUNT_PATH=/app/firebase-service-account.json
+  #
+  # API Express no container escuta 8080; no host usamos 8081 se a 8080 ja estiver ocupada.
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: adminmaya_api
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./backend/firebase-service-account.json:/app/firebase-service-account.json:ro
+    environment:
+      PORT: "8080"
+      NODE_ENV: production
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_USER: root
+      MYSQL_PASSWORD: "123456"
+      MYSQL_DATABASE: mayarpg
+      JWT_SECRET: troque-este-segredo-seguro-ok
+      JWT_EXPIRES_IN: 1d
+      DEMO_ADMIN_EMAIL: mayarpg@gmail.com
+      DEMO_ADMIN_PASSWORD: "1234"
+      ALLOW_START_WITHOUT_DB: "false"
+      FIREBASE_SERVICE_ACCOUNT_PATH: /app/firebase-service-account.json
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # Painel admin (React build estático). Browser: http://localhost:5173
+  admin-web:
+    build:
+      context: ./admin-web
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8081
+    container_name: adminmaya_web
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+  # Opcional: Nest + Prisma (`maya_rpg`). Frontend ainda nao aponta para estas rotas por defeito.
+  # Uso: docker compose --profile nest up -d
+  api-nest:
+    profiles: ["nest"]
+    build:
+      context: ./BACKEND-MAYA-RPG
+      dockerfile: Dockerfile
+    container_name: adminmaya_api_nest
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      PORT: "8080"
+      DATABASE_URL: mysql://root:123456@mysql:3306/maya_rpg
+      JWT_SECRET: troque-este-segredo-seguro-ok
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command:
+      [
+        "sh",
+        "-c",
+        "npx prisma migrate deploy && node dist/src/main.js",
+      ]
+
+volumes:
+  adminmaya_mysql_data:
