@@ -40,6 +40,12 @@ public class MainActivity extends AppCompatActivity {
         Button btnVisitante = findViewById(R.id.btnVisitante);
         TextView tvCadastro = findViewById(R.id.tvCadastro);
 
+        // Se o Firebase ainda tem sessao, so preenche o e-mail (senha o usuario digita e toca em Login).
+        FirebaseUser jaLogado = firebaseAuth.getCurrentUser();
+        if (jaLogado != null && jaLogado.getEmail() != null) {
+            etUsuario.setText(jaLogado.getEmail());
+        }
+
         // Login real com Firebase Authentication (Email/Senha).
         btnLogin.setOnClickListener(v -> {
             String usuario = etUsuario.getText().toString().trim().toLowerCase();
@@ -83,16 +89,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, GuestActivity.class);
             startActivity(intent);
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        // Evita entrar na Home sem token JWT local para chamadas no backend.
-        if (user != null && user.isEmailVerified() && sessionManager.getToken() != null) {
-            openHome(user);
-        }
     }
 
     /**
