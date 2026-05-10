@@ -1,13 +1,18 @@
-# App Android - Fundacao de Integracao API
+# App (Android) - integração
 
-Este diretorio contem a base de integracao HTTP para o app Android do MayaRpg.
+Este diretório agrupa o projeto Android em `app/MayaRpg`.
 
-Estrutura sugerida para copiar para o modulo Android real:
+## Objetivo
 
-- `network/BuildConfigFields.kt`
-- `network/SessionManager.kt`
-- `network/AuthInterceptor.kt`
-- `network/RetrofitClient.kt`
-- `network/services/AuthService.kt`
-- `network/services/PostsService.kt`
-- `network/services/AgendaService.kt`
+Base do app mobile com:
+- autenticação Firebase
+- integração com API REST
+- agenda e exercícios
+- registro de check-in de exercícios
+
+## Caminho principal
+
+Abra este projeto no Android Studio por:
+
+`app/MayaRpg`
+

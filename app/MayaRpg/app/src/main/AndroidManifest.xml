@@ -4,6 +4,8 @@
 
     <!-- Necessario para chamadas HTTP/HTTPS da API -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: necessário para mostrar notificação local -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"

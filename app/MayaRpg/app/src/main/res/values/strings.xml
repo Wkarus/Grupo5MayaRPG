@@ -88,4 +88,8 @@
     <string name="registrar_execucao">Registrar execucao (check-in)</string>
     <string name="exercicio_checkin_ok">Execucao registrada!</string>
     <string name="exercicio_checkin_erro">Nao foi possivel registrar. Tente novamente.</string>
+    <string name="notif_exercicios_channel">Novos exercicios</string>
+    <string name="notif_exercicios_channel_desc">Avisos quando houver exercicios novos na API</string>
+    <string name="notif_exercicios_novos_title">Novos exercícios disponíveis</string>
+    <string name="notif_exercicios_novos_body">Foram adicionados %1$d exercicio(s) novo(s).</string>
 </resources>

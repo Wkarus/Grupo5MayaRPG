@@ -1,6 +1,8 @@
 package com.example.mayarpg;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -9,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.mayarpg.network.ApiClient;
 import com.example.mayarpg.network.SessionManager;
@@ -23,6 +27,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+    private static final int REQ_NOTIFICATIONS = 1402;
 
     private FirebaseAuth firebaseAuth;
     private SessionManager sessionManager;
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
         sessionManager = new SessionManager(this);
+        requestNotificationPermissionIfNeeded();
 
         EditText etUsuario = findViewById(R.id.etUsuario);
         EditText etSenha = findViewById(R.id.etSenha);
@@ -197,5 +203,16 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("nome_usuario", nome);
         startActivity(intent);
         finish();
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU) {
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_NOTIFICATIONS);
     }
 }

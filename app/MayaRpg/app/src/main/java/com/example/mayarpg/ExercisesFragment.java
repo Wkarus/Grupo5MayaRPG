@@ -76,6 +76,8 @@ public class ExercisesFragment extends Fragment {
                     tvEmpty.setVisibility(View.VISIBLE);
                     return;
                 }
+                // Notificação local simples baseada na diferença de quantidade de exercícios.
+                ExerciseNewNotification.notifyIfHasNew(requireContext(), list.size());
                 tvEmpty.setVisibility(View.GONE);
                 for (ExerciseService.ExerciseDto ex : list) {
                     if (ex == null) {
