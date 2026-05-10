@@ -26,6 +26,10 @@ const TIME_SLOTS = [
   "16:30"
 ];
 
+// Fluxo da Agenda:
+// 1) Admin escolhe dia no calendário.
+// 2) Horários vêm da API e viram status LIVRE/OCUPADO.
+// 3) Botões chamam block/unblock e recarregam a agenda.
 export function AgendaPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -33,6 +37,7 @@ export function AgendaPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Formato de data usado pelo backend (YYYY-MM-DD).
   const selectedDateIso = useMemo(() => format(selectedDate, "yyyy-MM-dd"), [selectedDate]);
 
   useEffect(() => {
@@ -48,6 +53,7 @@ export function AgendaPage() {
     void fetchAgenda();
   }, []);
 
+  // Mapa por hora para lookup rápido de status de cada botão.
   const slotsByTime = useMemo(() => {
     const currentDayRows = agenda.filter((item) => item.data === selectedDateIso);
     const map = new Map<string, AgendaItem>();
@@ -64,6 +70,7 @@ export function AgendaPage() {
   }
 
   function formatEndTime(slot: string) {
+    // Backend exige inicio/fim. Aqui o fim é sempre +30 min.
     const parsed = parse(slot, "HH:mm", new Date());
     return format(addMinutes(parsed, 30), "HH:mm:ss");
   }
@@ -81,6 +88,7 @@ export function AgendaPage() {
         data: selectedDateIso,
         horario_inicio: `${selectedSlot}:00`,
         horario_fim: formatEndTime(selectedSlot),
+        // Motivo fixo do MVP; pode virar campo livre depois.
         motivo: "Bloqueio manual do admin"
       });
       await refreshAgenda();
@@ -110,16 +118,16 @@ export function AgendaPage() {
 
   return (
     <div>
-      <h1>Agenda</h1>
-      <p>Selecione um dia, veja os horarios e altere status de ocupado/livre.</p>
+      <h1 className="page-title">Agenda</h1>
+      <p className="page-subtitle">Selecione um dia, veja os horários e altere status de ocupado/livre.</p>
       {error && <p style={{ color: "#b91c1c", marginTop: 12 }}>{error}</p>}
 
       <div style={{ display: "flex", gap: 24, alignItems: "flex-start", marginTop: 16 }}>
-        <div style={{ background: "#fff", padding: 12, borderRadius: 8 }}>
+        <div className="card" style={{ padding: 12 }}>
           <DayPicker mode="single" selected={selectedDate} onSelect={(date) => date && setSelectedDate(date)} />
         </div>
 
-        <div style={{ flex: 1, textAlign: "left" }}>
+        <div className="card" style={{ flex: 1, textAlign: "left" }}>
           <h3 style={{ marginTop: 0 }}>Horarios de {format(selectedDate, "dd/MM/yyyy")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(120px, 1fr))", gap: 8 }}>
             {TIME_SLOTS.map((slot) => {
@@ -145,13 +153,13 @@ export function AgendaPage() {
           </div>
 
           <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-            <button disabled={loading || !selectedSlot || getSlotStatus(selectedSlot) === "OCUPADO"} onClick={() => void marcarOcupado()}>
+            <button className="btn btn-teal" disabled={loading || !selectedSlot || getSlotStatus(selectedSlot) === "OCUPADO"} onClick={() => void marcarOcupado()}>
               Marcar ocupado
             </button>
-            <button disabled={loading || !selectedSlot || getSlotStatus(selectedSlot) === "LIVRE"} onClick={() => void marcarLivre()}>
+            <button className="btn btn-primary" disabled={loading || !selectedSlot || getSlotStatus(selectedSlot) === "LIVRE"} onClick={() => void marcarLivre()}>
               Marcar livre
             </button>
-            <button disabled={loading || !selectedSlot} onClick={() => setSelectedSlot(null)}>
+            <button className="btn btn-ghost" disabled={loading || !selectedSlot} onClick={() => setSelectedSlot(null)}>
               Cancelar selecao
             </button>
           </div>

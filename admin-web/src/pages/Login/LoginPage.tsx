@@ -33,18 +33,23 @@ export function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 360, margin: "60px auto", fontFamily: "Arial, sans-serif" }}>
-      <h1>Login Admin</h1>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ maxWidth: 420, margin: "70px auto" }}>
+      <div className="card">
+        <h1 className="page-title" style={{ marginBottom: 4 }}>
+          Login Admin
+        </h1>
+        <p className="page-subtitle">Use seu e-mail e senha para entrar no painel.</p>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         <input placeholder="Email" {...register("email")} />
         {errors.email && <small>{errors.email.message}</small>}
         <input placeholder="Senha" type="password" {...register("senha")} />
         {errors.senha && <small>{errors.senha.message}</small>}
         {error && <small>{error}</small>}
-        <button disabled={isSubmitting} type="submit">
+        <button className="btn btn-primary" disabled={isSubmitting} type="submit">
           {isSubmitting ? "Entrando..." : "Entrar"}
         </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

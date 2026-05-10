@@ -18,11 +18,13 @@ export function PostsPage() {
 
   return (
     <div>
-      <h1>Posts</h1>
-      <p>Tela inicial com acao de criacao para validar integracao.</p>
-      <button onClick={() => void createSamplePost()} disabled={loading}>
-        {loading ? "Enviando..." : "Criar post de teste"}
-      </button>
+      <h1 className="page-title">Posts</h1>
+      <p className="page-subtitle">Publicação simples para validar integração com o backend.</p>
+      <div className="card" style={{ maxWidth: 520 }}>
+        <button className="btn btn-primary" onClick={() => void createSamplePost()} disabled={loading}>
+          {loading ? "Enviando..." : "Criar post de teste"}
+        </button>
+      </div>
     </div>
   );
 }

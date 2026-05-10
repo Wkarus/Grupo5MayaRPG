@@ -51,6 +51,27 @@ async function persistFirebaseUser(email: string, nome: string, uid: string): Pr
   return userPayload;
 }
 
+/**
+ * Ligação simples Firebase -> patients:
+ * - se já existir paciente com esse e-mail: mantém e força status ATIVO
+ * - se não existir: cria um paciente básico
+ */
+async function syncPatientFromFirebase(email: string, nome: string): Promise<void> {
+  const emailNorm = email.trim().toLowerCase();
+  const [rows] = await pool.query<RowDataPacket[]>(
+    "SELECT id FROM patients WHERE email = ? LIMIT 1",
+    [emailNorm]
+  );
+  if (rows.length > 0) {
+    await pool.query("UPDATE patients SET status = 'ATIVO' WHERE id = ?", [rows[0]!.id]);
+    return;
+  }
+  await pool.query(
+    "INSERT INTO patients (nome, email, status, observacoes) VALUES (?, ?, 'ATIVO', ?)",
+    [nome.trim() || emailNorm.split("@")[0]!, emailNorm, "Criado automaticamente no login Firebase."]
+  );
+}
+
 authRouter.post("/firebase", async (req, res, next) => {
   try {
     const { idToken } = firebaseLoginSchema.parse(req.body);
@@ -87,6 +108,7 @@ authRouter.post("/firebase", async (req, res, next) => {
         : email.split("@")[0]!;
 
     const user = await persistFirebaseUser(email, nome, decoded.uid);
+    await syncPatientFromFirebase(email, nome);
     const token = jwt.sign(user, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"] });
     return res.json({ token, user });
   } catch (error) {

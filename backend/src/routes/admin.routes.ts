@@ -28,6 +28,18 @@ const exerciseCreateSchema = z.object({
   descricao: z.string().max(1000).optional()
 });
 
+const patientSchema = z.object({
+  nome: z.string().min(2).max(191),
+  telefone: z.string().max(50).optional(),
+  email: z.string().email().max(191).optional(),
+  status: z.enum(["ATIVO", "INATIVO"]).default("ATIVO"),
+  observacoes: z.string().max(5000).optional()
+});
+
+const patientRecordSchema = z.object({
+  observacao: z.string().min(3).max(5000)
+});
+
 export const adminRouter = Router();
 
 async function countFromQuery(sql: string) {
@@ -160,6 +172,121 @@ adminRouter.post("/exercises", adminActionLogger("ADMIN_EXERCISE_CREATE"), async
       body.descricao?.trim() ?? null
     ]);
     return res.status(201).json({ message: "Exercicio criado." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/patients", async (req, res, next) => {
+  try {
+    const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
+    const status = typeof req.query.status === "string" ? req.query.status.trim().toUpperCase() : "";
+    const statusFilter = status === "ATIVO" || status === "INATIVO" ? status : "";
+    const like = `%${q}%`;
+    const [rows] = await pool.query(
+      `SELECT id, nome, telefone, email, status, observacoes, created_at
+       FROM patients
+       WHERE (? = '' OR status = ?)
+         AND (? = '' OR nome LIKE ? OR COALESCE(telefone, '') LIKE ? OR COALESCE(email, '') LIKE ?)
+       ORDER BY nome ASC`,
+      [statusFilter, statusFilter, q, like, like, like]
+    );
+    return res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/patients", adminActionLogger("ADMIN_PATIENT_CREATE"), async (req, res, next) => {
+  try {
+    const body = patientSchema.parse(req.body);
+    await pool.query(
+      `INSERT INTO patients (nome, telefone, email, status, observacoes)
+       VALUES (?, ?, ?, ?, ?)`,
+      [
+        body.nome.trim(),
+        body.telefone?.trim() || null,
+        body.email?.trim().toLowerCase() || null,
+        body.status,
+        body.observacoes?.trim() || null
+      ]
+    );
+    return res.status(201).json({ message: "Paciente criado." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.put("/patients/:id", adminActionLogger("ADMIN_PATIENT_UPDATE"), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id < 1) {
+      return res.status(400).json({ message: "ID invalido." });
+    }
+    const body = patientSchema.parse(req.body);
+    await pool.query(
+      `UPDATE patients
+       SET nome = ?, telefone = ?, email = ?, status = ?, observacoes = ?
+       WHERE id = ?`,
+      [
+        body.nome.trim(),
+        body.telefone?.trim() || null,
+        body.email?.trim().toLowerCase() || null,
+        body.status,
+        body.observacoes?.trim() || null,
+        id
+      ]
+    );
+    return res.json({ message: "Paciente atualizado." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/patients/:id", adminActionLogger("ADMIN_PATIENT_DELETE"), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id < 1) {
+      return res.status(400).json({ message: "ID invalido." });
+    }
+    await pool.query("DELETE FROM patients WHERE id = ?", [id]);
+    return res.json({ message: "Paciente removido." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.get("/patients/:id/records", async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id < 1) {
+      return res.status(400).json({ message: "ID invalido." });
+    }
+    const [rows] = await pool.query(
+      `SELECT id, patient_id as patientId, observacao, created_at as createdAt
+       FROM patient_records
+       WHERE patient_id = ?
+       ORDER BY created_at DESC`,
+      [id]
+    );
+    return res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/patients/:id/records", adminActionLogger("ADMIN_RECORD_CREATE"), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id < 1) {
+      return res.status(400).json({ message: "ID invalido." });
+    }
+    const body = patientRecordSchema.parse(req.body);
+    await pool.query(
+      "INSERT INTO patient_records (patient_id, observacao) VALUES (?, ?)",
+      [id, body.observacao.trim()]
+    );
+    return res.status(201).json({ message: "Prontuario adicionado." });
   } catch (error) {
     next(error);
   }

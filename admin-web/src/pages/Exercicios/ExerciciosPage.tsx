@@ -8,6 +8,10 @@ type ExerciseRow = {
   descricao: string | null;
 };
 
+// Fluxo da página:
+// 1) Lista atual vem de /admin/exercises.
+// 2) Formulário cria novo exercício no backend.
+// 3) Após salvar, recarrega a lista para refletir imediatamente.
 export function ExerciciosPage() {
   const [lista, setLista] = useState<ExerciseRow[]>([]);
   const [titulo, setTitulo] = useState("");
@@ -25,7 +29,8 @@ export function ExerciciosPage() {
     }
   }
 
-  // Ao abrir a pagina, carrega uma vez
+  // Ao abrir a página, carrega uma vez.
+  // Usamos flag "ativo" para evitar setState se o componente desmontar.
   useEffect(() => {
     let ativo = true;
     void (async () => {
@@ -50,6 +55,7 @@ export function ExerciciosPage() {
     setMsg(null);
     setLoading(true);
     try {
+      // payload mínimo do requisito (título + descrição opcional)
       await api.post("/admin/exercises", {
         titulo: titulo.trim(),
         descricao: descricao.trim() || undefined
@@ -67,10 +73,12 @@ export function ExerciciosPage() {
 
   return (
     <div>
-      <h1>Exercicios (app)</h1>
-      <p style={{ maxWidth: 560 }}>Cadastro basico para o app Android.</p>
+      <h1 className="page-title">Exercicios (app)</h1>
+      <p className="page-subtitle" style={{ maxWidth: 560 }}>
+        Cadastro basico para o app Android.
+      </p>
 
-      <form onSubmit={(ev) => void criar(ev)} style={{ marginBottom: 24, maxWidth: 480 }}>
+      <form className="card" onSubmit={(ev) => void criar(ev)} style={{ marginBottom: 24, maxWidth: 560 }}>
         <div style={{ marginBottom: 12 }}>
           <label>
             <div>Titulo</div>
@@ -94,15 +102,16 @@ export function ExerciciosPage() {
             />
           </label>
         </div>
-        <button type="submit" disabled={loading}>
+        <button className="btn btn-teal" type="submit" disabled={loading}>
           {loading ? "Salvando..." : "Adicionar"}
         </button>
       </form>
 
       {msg ? <p>{msg}</p> : null}
 
-      <h2 style={{ fontSize: "1.1rem" }}>Lista</h2>
-      <ul style={{ paddingLeft: 18 }}>
+      <div className="card">
+      <h2 style={{ fontSize: "1.1rem", marginBottom: 8 }}>Lista</h2>
+      <ul style={{ paddingLeft: 18, margin: 0 }}>
         {lista.map((ex) => (
           <li key={ex.id} style={{ marginBottom: 8 }}>
             <strong>{ex.titulo}</strong>
@@ -110,6 +119,7 @@ export function ExerciciosPage() {
           </li>
         ))}
       </ul>
+      </div>
     </div>
   );
 }

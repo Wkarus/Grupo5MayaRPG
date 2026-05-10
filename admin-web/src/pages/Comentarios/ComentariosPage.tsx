@@ -29,18 +29,24 @@ export function ComentariosPage() {
 
   return (
     <div>
-      <h1>Comentarios</h1>
+      <h1 className="page-title">Comentarios</h1>
+      <p className="page-subtitle">Modere os comentários enviados pelos pacientes.</p>
       {loading && <p>Carregando...</p>}
-      {comments.map((comment) => (
-        <div key={comment.id} style={{ borderBottom: "1px solid #ddd", padding: 8 }}>
-          <strong>{comment.autor}</strong> - {comment.status}
-          <p>{comment.texto}</p>
-          <button onClick={() => void moderar(comment.id, "APROVADO")}>Aprovar</button>
-          <button onClick={() => void moderar(comment.id, "REPROVADO")} style={{ marginLeft: 8 }}>
-            Reprovar
-          </button>
-        </div>
-      ))}
+      <div className="card">
+        {comments.map((comment) => (
+          <div key={comment.id} style={{ borderBottom: "1px solid #edf0f2", padding: 10 }}>
+            <strong>{comment.autor}</strong>{" "}
+            <span style={{ color: "#3d5066", fontSize: 13 }}>({comment.status})</span>
+            <p style={{ marginTop: 6, marginBottom: 8 }}>{comment.texto}</p>
+            <button className="btn btn-teal" onClick={() => void moderar(comment.id, "APROVADO")}>
+              Aprovar
+            </button>
+            <button className="btn btn-danger" onClick={() => void moderar(comment.id, "REPROVADO")} style={{ marginLeft: 8 }}>
+              Reprovar
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
