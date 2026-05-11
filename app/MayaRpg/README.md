@@ -21,6 +21,21 @@ MAYA_API_BASE_URL=http://10.0.2.2:8081/
 
 4. Rode no emulador/dispositivo.
 
+## APK para outra pessoa
+
+O cadastro usa Firebase, mas o login tambem chama a API do backend. O APK grava a URL da API na hora do build.
+
+- `10.0.2.2` so funciona no emulador do Android Studio.
+- Celular fisico ou APK enviado para outra pessoa precisa de URL acessivel (servidor publico ou IP da rede).
+
+Antes de gerar o APK de release, defina em `local.properties`:
+
+```properties
+MAYA_API_BASE_URL_RELEASE=https://sua-api-publica.com/
+```
+
+Depois gere o APK de release no Android Studio. A API precisa estar online e acessivel para quem for instalar o app.
+
 ## Fluxo principal implementado
 
 - Tela de exercícios busca dados da API (`GET /exercises`)

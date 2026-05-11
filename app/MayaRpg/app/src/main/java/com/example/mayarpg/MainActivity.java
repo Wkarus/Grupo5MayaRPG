@@ -188,9 +188,23 @@ public class MainActivity extends AppCompatActivity {
         if (BuildConfig.DEBUG) {
             String msg = "API " + BuildConfig.API_BASE_URL + "\n" + (t.getMessage() != null ? t.getMessage() : "rede");
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, "Erro ao conectar com API.", Toast.LENGTH_SHORT).show();
+            return;
         }
+        if (isLocalDevApiUrl(BuildConfig.API_BASE_URL)) {
+            Toast.makeText(this, getString(R.string.erro_api_apk_desenvolvimento), Toast.LENGTH_LONG).show();
+            return;
+        }
+        Toast.makeText(this, getString(R.string.erro_api_offline), Toast.LENGTH_LONG).show();
+    }
+
+    private static boolean isLocalDevApiUrl(String url) {
+        if (url == null) {
+            return false;
+        }
+        String normalized = url.toLowerCase();
+        return normalized.contains("10.0.2.2")
+                || normalized.contains("localhost")
+                || normalized.contains("127.0.0.1");
     }
 
     private void openHome(FirebaseUser user) {

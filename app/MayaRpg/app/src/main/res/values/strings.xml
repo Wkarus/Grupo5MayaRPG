@@ -37,6 +37,8 @@
     <string name="cadastro_sucesso">Cadastro concluido com sucesso!</string>
     <string name="email_inexistente">Nao foi possivel abrir app de e-mail.</string>
     <string name="login_falhou">Nao foi possivel fazer login. Verifique email e senha.</string>
+    <string name="erro_api_apk_desenvolvimento">Este APK foi feito para teste no emulador ou no PC. Gere outro APK com a URL publica da API.</string>
+    <string name="erro_api_offline">Nao foi possivel conectar na API. Confira a internet e se o servidor esta online.</string>
     <string name="email_nao_verificado">Seu e-mail ainda nao foi verificado. Reenviamos a confirmacao.</string>
     <string name="cadastro_falhou">Nao foi possivel concluir cadastro.</string>
     <string name="cadastro_sucesso_email">Cadastro concluido! Verifique seu e-mail antes de entrar.</string>

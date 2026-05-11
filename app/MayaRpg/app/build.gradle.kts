@@ -12,6 +12,35 @@ val localProps = Properties().apply {
 fun quoteForBuildConfig(value: String): String =
     value.replace("\\", "\\\\").replace("\"", "\\\"")
 
+fun normalizeApiUrl(raw: String): String {
+    val trimmed = raw.trim()
+    return if (trimmed.endsWith("/")) trimmed else "$trimmed/"
+}
+
+fun resolveApiUrl(vararg keys: String, fallback: String): String {
+    for (key in keys) {
+        val value = localProps.getProperty(key)?.trim()
+        if (!value.isNullOrEmpty()) {
+            return normalizeApiUrl(value)
+        }
+    }
+    return normalizeApiUrl(fallback)
+}
+
+val apiUrlDebug = resolveApiUrl("MAYA_API_BASE_URL", fallback = "http://10.0.2.2:8081/")
+val apiUrlRelease = resolveApiUrl(
+    "MAYA_API_BASE_URL_RELEASE",
+    "MAYA_API_BASE_URL",
+    fallback = "http://10.0.2.2:8081/"
+)
+
+if (apiUrlRelease.contains("10.0.2.2")) {
+    logger.warn(
+        "APK release ainda aponta para 10.0.2.2 (so funciona no emulador). " +
+            "Defina MAYA_API_BASE_URL_RELEASE em local.properties antes de gerar o APK."
+    )
+}
+
 android {
     namespace = "com.example.mayarpg"
     compileSdk {
@@ -28,17 +57,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // Emulador: http://10.0.2.2:8080 aponta para localhost do PC. Telefone USB/Wi‑Fi:
-        // defina MAYA_API_BASE_URL em local.properties (ex.: http://192.168.15.8:8080/).
-        val apiUrl = localProps.getProperty("MAYA_API_BASE_URL", "http://10.0.2.2:8080/")
-            .trim()
-            .let { if (it.endsWith("/")) it else "$it/" }
-        buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrl)}\"")
+        buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDebug)}\"")
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDebug)}\"")
+        }
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlRelease)}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
