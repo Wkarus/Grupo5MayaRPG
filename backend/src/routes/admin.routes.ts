@@ -1,7 +1,10 @@
 import { Router } from "express";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { z } from "zod";
 import { pool } from "../db/mysql";
 import { adminActionLogger } from "../middlewares/adminActionLogger";
+import { postMediaUpload } from "../middlewares/upload";
+import { ApiError } from "../utils/ApiError";
 
 const postSchema = z.object({
   titulo: z.string().min(3),
@@ -51,7 +54,7 @@ adminRouter.get("/dashboard", async (_req, res, next) => {
   try {
     const consultas = await countFromQuery("SELECT COUNT(*) as total FROM agendamentos WHERE data = CURDATE()");
     const bloqueados = await countFromQuery("SELECT COUNT(*) as total FROM agenda WHERE bloqueado = 1");
-    const comentarios = await countFromQuery("SELECT COUNT(*) as total FROM comments WHERE status = 'PENDENTE'");
+    const comentarios = await countFromQuery("SELECT COUNT(*) as total FROM comments WHERE lido = 0");
     const posts = await countFromQuery("SELECT COUNT(*) as total FROM posts WHERE status = 'PUBLICADO'");
     return res.json({
       consultasDoDia: consultas,
@@ -70,18 +73,94 @@ adminRouter.get("/dashboard", async (_req, res, next) => {
   }
 });
 
-adminRouter.post("/posts", adminActionLogger("ADMIN_POST_CREATE"), async (req, res, next) => {
+adminRouter.get("/posts", async (_req, res, next) => {
   try {
-    const body = postSchema.parse(req.body);
-    await pool.query(
-      "INSERT INTO posts (titulo, conteudo, categoria, status, data_publicacao) VALUES (?, ?, ?, ?, ?)",
-      [body.titulo, body.conteudo, body.categoria, body.status, body.data_publicacao ?? null]
+    const [rows] = await pool.query<RowDataPacket[]>(
+      `SELECT p.id, p.titulo, p.conteudo, p.categoria, p.status, p.tipo, p.media_url as mediaUrl,
+              p.audience, p.data_publicacao as dataPublicacao,
+              GROUP_CONCAT(pt.nome ORDER BY pt.nome SEPARATOR ', ') as destinatarios
+       FROM posts p
+       LEFT JOIN post_recipients pr ON pr.post_id = p.id
+       LEFT JOIN patients pt ON pt.id = pr.patient_id
+       GROUP BY p.id
+       ORDER BY p.id DESC
+       LIMIT 100`
     );
-    return res.status(201).json({ message: "Post criado com sucesso." });
+    return res.json(rows);
   } catch (error) {
     next(error);
   }
 });
+
+adminRouter.post(
+  "/posts",
+  postMediaUpload.single("media"),
+  adminActionLogger("ADMIN_POST_CREATE"),
+  async (req, res, next) => {
+    try {
+      const titulo = String(req.body?.titulo ?? "").trim();
+      const conteudoRaw = String(req.body?.conteudo ?? "").trim();
+      const categoria = String(req.body?.categoria ?? "maya").trim() || "maya";
+      const status = req.body?.status === "RASCUNHO" ? "RASCUNHO" : "PUBLICADO";
+      const audience = req.body?.audience === "SELECIONADOS" ? "SELECIONADOS" : "TODOS";
+
+      let patientIds: number[] = [];
+      try {
+        const parsed = JSON.parse(String(req.body?.patientIds ?? "[]"));
+        if (Array.isArray(parsed)) {
+          patientIds = parsed.map((v) => Number(v)).filter((n) => Number.isFinite(n) && n > 0);
+        }
+      } catch {
+        patientIds = [];
+      }
+
+      if (titulo.length < 2) {
+        return next(new ApiError(400, "Titulo obrigatorio."));
+      }
+      if (!conteudoRaw && !req.file) {
+        return next(new ApiError(400, "Informe um comentario ou envie foto/video."));
+      }
+      if (audience === "SELECIONADOS" && patientIds.length === 0) {
+        return next(new ApiError(400, "Selecione ao menos um paciente."));
+      }
+
+      let tipo: "TEXTO" | "IMAGEM" | "VIDEO" = "TEXTO";
+      let mediaUrl: string | null = null;
+      if (req.file) {
+        tipo = req.file.mimetype.startsWith("video/") ? "VIDEO" : "IMAGEM";
+        mediaUrl = `/uploads/${req.file.filename}`;
+      }
+
+      const [result] = await pool.execute<ResultSetHeader>(
+        `INSERT INTO posts (titulo, conteudo, categoria, status, data_publicacao, tipo, media_url, audience)
+         VALUES (?, ?, ?, ?, NOW(), ?, ?, ?)`,
+        [
+          titulo,
+          conteudoRaw || null,
+          categoria,
+          status,
+          tipo,
+          mediaUrl,
+          audience
+        ]
+      );
+
+      const postId = Number(result.insertId);
+      if (audience === "SELECIONADOS") {
+        for (const patientId of patientIds) {
+          await pool.query("INSERT INTO post_recipients (post_id, patient_id) VALUES (?, ?)", [
+            postId,
+            patientId
+          ]);
+        }
+      }
+
+      return res.status(201).json({ message: "Post publicado.", id: postId, mediaUrl });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 adminRouter.put("/posts/:id", adminActionLogger("ADMIN_POST_UPDATE"), async (req, res, next) => {
   try {
@@ -92,6 +171,19 @@ adminRouter.put("/posts/:id", adminActionLogger("ADMIN_POST_UPDATE"), async (req
       [body.titulo, body.conteudo, body.categoria, body.status, body.data_publicacao ?? null, id]
     );
     return res.json({ message: "Post atualizado com sucesso." });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete("/posts/:id", adminActionLogger("ADMIN_POST_DELETE"), async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id < 1) {
+      return res.status(400).json({ message: "ID invalido." });
+    }
+    await pool.query("DELETE FROM posts WHERE id = ?", [id]);
+    return res.json({ message: "Post removido." });
   } catch (error) {
     next(error);
   }
@@ -125,12 +217,35 @@ adminRouter.post("/agenda/unblock", adminActionLogger("ADMIN_AGENDA_UNBLOCK"), a
   }
 });
 
+adminRouter.get("/comments/unread-count", async (_req, res, next) => {
+  try {
+    const total = await countFromQuery("SELECT COUNT(*) as total FROM comments WHERE lido = 0");
+    return res.json({ total });
+  } catch (error) {
+    return res.json({ total: 0 });
+  }
+});
+
 adminRouter.get("/comments", async (_req, res, next) => {
   try {
     const [rows] = await pool.query(
-      "SELECT id, autor, texto, status, resposta, created_at FROM comments ORDER BY created_at DESC"
+      `SELECT id, autor, texto, status, resposta, lido, created_at as createdAt
+       FROM comments ORDER BY created_at DESC`
     );
     return res.json(rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.post("/comments/mark-read", adminActionLogger("ADMIN_COMMENTS_MARK_READ"), async (req, res, next) => {
+  try {
+    const autor = typeof req.body?.autor === "string" ? req.body.autor.trim() : "";
+    if (!autor) {
+      return res.status(400).json({ message: "Autor obrigatorio." });
+    }
+    await pool.query("UPDATE comments SET lido = 1 WHERE autor = ? AND lido = 0", [autor]);
+    return res.json({ message: "Comentarios marcados como lidos." });
   } catch (error) {
     next(error);
   }

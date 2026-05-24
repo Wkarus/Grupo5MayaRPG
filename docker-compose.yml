@@ -46,6 +46,7 @@ services:
       - "8081:8080"
     volumes:
       - ./backend/firebase-service-account.json:/app/firebase-service-account.json:ro
+      - ./backend/uploads:/app/uploads
     environment:
       PORT: "8080"
       NODE_ENV: production

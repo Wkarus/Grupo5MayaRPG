@@ -1,13 +1,12 @@
-# Copie este ficheiro para `local.properties` (na mesma pasta) e ajuste.
-# O ficheiro real e ignorado pelo Git.
+# Copie para local.properties na mesma pasta.
 
-## Caminho da SDK Android (Android Studio preenche ao abrir o projeto)
 # sdk.dir=C\:\\Users\\SEU_USUARIO\\AppData\\Local\\Android\\Sdk
 
-## URL base da API Express (barra final obrigatoria para o Retrofit)
-# Emulador apontando para o PC (Docker neste repo usa a porta 8081):
-# MAYA_API_BASE_URL=http://10.0.2.2:8081/
-# Telefone na mesma rede Wi-Fi (troque pelo IP do PC; ipconfig):
-# MAYA_API_BASE_URL=http://192.168.1.100:8081/
-# APK para outra pessoa (URL publica ou IP acessivel fora do emulador):
-# MAYA_API_BASE_URL_RELEASE=https://sua-api-publica.com/
+# Emulador (Run no Android Studio)
+# MAYA_API_BASE_URL_EMULATOR=http://10.0.2.2:8081/
+
+# Celular fisico — Cloudflare (cloudflared tunnel --url http://localhost:8081)
+# MAYA_API_BASE_URL_DEVICE=https://SUA-URL.trycloudflare.com/
+
+# Celular na mesma Wi-Fi — IP do PC (ipconfig)
+# MAYA_API_BASE_URL_DEVICE=http://192.168.0.100:8081/

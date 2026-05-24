@@ -12,17 +12,6 @@ const createAgendamentoSchema = z.object({
 
 export const publicRouter = Router();
 
-publicRouter.get("/posts", async (_req, res, next) => {
-  try {
-    const [rows] = await pool.query(
-      "SELECT id, titulo, conteudo, categoria, status, data_publicacao FROM posts WHERE status = 'PUBLICADO' ORDER BY data_publicacao DESC"
-    );
-    return res.json(rows);
-  } catch (error) {
-    next(error);
-  }
-});
-
 publicRouter.get("/agenda/disponivel", async (_req, res, next) => {
   try {
     const [rows] = await pool.query(

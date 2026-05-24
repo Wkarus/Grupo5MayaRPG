@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { api } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 
 // Itens fixos da barra lateral (estrutura simples para facilitar manutenção em grupo).
@@ -15,6 +17,23 @@ const NAV_ITEMS = [
 // Layout base do painel: menu lateral + area de conteudo.
 export function AdminLayout() {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [unreadComments, setUnreadComments] = useState(0);
+
+  useEffect(() => {
+    async function loadUnread() {
+      try {
+        const response = await api.get<{ total: number }>("/admin/comments/unread-count");
+        setUnreadComments(response.data.total ?? 0);
+      } catch {
+        setUnreadComments(0);
+      }
+    }
+    void loadUnread();
+    const onRead = () => void loadUnread();
+    window.addEventListener("comments-read", onRead);
+    return () => window.removeEventListener("comments-read", onRead);
+  }, [location.pathname]);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
@@ -42,6 +61,9 @@ export function AdminLayout() {
               })}
             >
               {item.label}
+              {item.to === "/comentarios" && unreadComments > 0 && (
+                <span className="nav-unread-dot" title="Novos comentarios" />
+              )}
             </NavLink>
           ))}
         </nav>

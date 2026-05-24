@@ -2,19 +2,28 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import path from "path";
 import { authRouter } from "./routes/auth.routes";
+import { commentsRouter } from "./routes/comments.routes";
 import { exercisesRouter } from "./routes/exercises.routes";
 import { publicRouter } from "./routes/public.routes";
+import { meRouter } from "./routes/me.routes";
+import { postsRouter } from "./routes/posts.routes";
 import { adminRouter } from "./routes/admin.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
 import { requireAuth, requireRole } from "./middlewares/auth";
 
 export const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+  })
+);
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
@@ -27,7 +36,7 @@ app.get("/", (_req, res) => {
     health: "/health",
     login: "POST /auth/login",
     firebaseLogin: "POST /auth/firebase",
-    publicados: "GET /posts",
+    publicados: "GET /posts (auth)",
     agenda: "GET /agenda/disponivel",
     exercicios: "GET /exercises (auth)",
     checkin: "POST /exercises/:id/checkin (auth)",
@@ -38,6 +47,9 @@ app.get("/", (_req, res) => {
 
 app.use("/auth", authRouter);
 app.use("/", publicRouter);
+app.use("/", commentsRouter);
+app.use("/", postsRouter);
+app.use("/", meRouter);
 app.use("/", exercisesRouter);
 app.use("/admin", requireAuth, requireRole("ADMIN"), adminRouter);
 

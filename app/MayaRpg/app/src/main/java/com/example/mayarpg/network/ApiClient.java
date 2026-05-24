@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.mayarpg.BuildConfig;
 import com.example.mayarpg.network.services.AgendaService;
 import com.example.mayarpg.network.services.AuthService;
+import com.example.mayarpg.network.services.CommentService;
 import com.example.mayarpg.network.services.ExerciseService;
 import com.example.mayarpg.network.services.PostsService;
 
@@ -34,8 +35,10 @@ public class ApiClient {
                     .addInterceptor(new AuthInterceptor(sessionManager))
                     .build();
 
+            String baseUrl = ApiConfig.resolveBaseUrl(context.getApplicationContext());
+
             retrofit = new Retrofit.Builder()
-                    .baseUrl(BuildConfig.API_BASE_URL)
+                    .baseUrl(baseUrl)
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -58,5 +61,9 @@ public class ApiClient {
     /** API de exercicios (lista + check-in) */
     public static ExerciseService exerciseService(Context context) {
         return getRetrofit(context).create(ExerciseService.class);
+    }
+
+    public static CommentService commentService(Context context) {
+        return getRetrofit(context).create(CommentService.class);
     }
 }

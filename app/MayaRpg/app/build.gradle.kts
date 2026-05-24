@@ -27,19 +27,14 @@ fun resolveApiUrl(vararg keys: String, fallback: String): String {
     return normalizeApiUrl(fallback)
 }
 
-val apiUrlDebug = resolveApiUrl("MAYA_API_BASE_URL", fallback = "http://10.0.2.2:8081/")
-val apiUrlRelease = resolveApiUrl(
-    "MAYA_API_BASE_URL_RELEASE",
+// Emulador (Android Studio) vs celular fisico (Cloudflare / IP da rede)
+val apiUrlEmulator = resolveApiUrl("MAYA_API_BASE_URL_EMULATOR", fallback = "http://10.0.2.2:8081/")
+val apiUrlDevice = resolveApiUrl(
+    "MAYA_API_BASE_URL_DEVICE",
     "MAYA_API_BASE_URL",
+    "MAYA_API_BASE_URL_RELEASE",
     fallback = "http://10.0.2.2:8081/"
 )
-
-if (apiUrlRelease.contains("10.0.2.2")) {
-    logger.warn(
-        "APK release ainda aponta para 10.0.2.2 (so funciona no emulador). " +
-            "Defina MAYA_API_BASE_URL_RELEASE em local.properties antes de gerar o APK."
-    )
-}
 
 android {
     namespace = "com.example.mayarpg"
@@ -57,16 +52,23 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDebug)}\"")
+        buildConfigField("String", "API_BASE_URL_EMULATOR", "\"${quoteForBuildConfig(apiUrlEmulator)}\"")
+        buildConfigField("String", "API_BASE_URL_DEVICE", "\"${quoteForBuildConfig(apiUrlDevice)}\"")
+        // Legado: mesma URL do dispositivo fisico
+        buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDevice)}\"")
     }
 
     buildTypes {
         debug {
-            buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDebug)}\"")
+            buildConfigField("String", "API_BASE_URL_EMULATOR", "\"${quoteForBuildConfig(apiUrlEmulator)}\"")
+            buildConfigField("String", "API_BASE_URL_DEVICE", "\"${quoteForBuildConfig(apiUrlDevice)}\"")
+            buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDevice)}\"")
         }
         release {
             isMinifyEnabled = false
-            buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlRelease)}\"")
+            buildConfigField("String", "API_BASE_URL_EMULATOR", "\"${quoteForBuildConfig(apiUrlEmulator)}\"")
+            buildConfigField("String", "API_BASE_URL_DEVICE", "\"${quoteForBuildConfig(apiUrlDevice)}\"")
+            buildConfigField("String", "API_BASE_URL", "\"${quoteForBuildConfig(apiUrlDevice)}\"")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

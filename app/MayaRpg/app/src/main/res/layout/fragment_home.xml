@@ -7,13 +7,15 @@
     android:background="#DDDEE3"
     android:orientation="vertical">
 
+    <!-- Barra superior fixa -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="62dp"
         android:background="@color/screen_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="14dp">
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp">
 
         <ImageButton
             android:id="@+id/btnLogoutTop"
@@ -40,6 +42,49 @@
             android:layout_height="1dp" />
     </LinearLayout>
 
+    <!-- Próxima sessão PINADA acima do scroll -->
+    <LinearLayout
+        android:id="@+id/cardProximaSessao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:orientation="vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/sua_proxima_sessao"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvProximaSessaoResumo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_chip_blue"
+            android:gravity="center"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="@string/proxima_sessao_agendar_hint"
+            android:textColor="@color/text_on_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Conteúdo com scroll -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -57,50 +102,35 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
+                android:layout_marginBottom="14dp"
+                android:layout_marginTop="10dp"
                 android:text="Ola! Francisco"
                 android:textColor="@android:color/black"
                 android:textSize="32sp"
                 android:textStyle="bold" />
 
+            <!-- Publicações da Maya -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/publicacoes_maya_titulo"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/postsFeedContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:orientation="vertical" />
+
+            <!-- Card mensagem da Maya -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@drawable/bg_card"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="@string/sua_proxima_sessao"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvProximaSessaoResumo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="12dp"
-                    android:background="@drawable/bg_chip_blue"
-                    android:gravity="center"
-                    android:minHeight="52dp"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="14dp"
-                    android:text="@string/proxima_sessao_agendar_hint"
-                    android:textColor="@color/text_on_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/bg_card"
                 android:orientation="vertical"
                 android:padding="14dp">

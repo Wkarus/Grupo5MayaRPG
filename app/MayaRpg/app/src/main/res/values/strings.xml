@@ -72,12 +72,19 @@
     <string name="pular">Pular</string>
     <string name="iniciar">Iniciar</string>
     <string name="voltar">Voltar</string>
+    <string name="voltar_login">Voltar ao login</string>
     <string name="responder_maya">Responder \u0020\u0020💬</string>
     <string name="sua_resposta_label">Sua resposta</string>
     <string name="hint_resposta_maya">Escreva sua mensagem para a Maya…</string>
     <string name="enviar_resposta">Enviar</string>
     <string name="resposta_vazia_toast">Digite uma mensagem antes de enviar.</string>
-    <string name="resposta_salva_toast">Resposta enviada.</string>
+    <string name="resposta_salva_toast">Resposta enviada para a Maya.</string>
+    <string name="resposta_erro_toast">Nao foi possivel enviar. Verifique a rede e o login.</string>
+    <string name="publicacoes_maya_titulo">Publicacoes da Maya</string>
+    <string name="sem_publicacoes_maya">Nenhuma publicacao no momento.</string>
+    <string name="ver_imagem">Imagem da publicacao</string>
+    <string name="assistir_video">Assistir video</string>
+    <string name="abrir_midia">Abrir midia</string>
     <string name="proxima_sessao_agendar_hint">Escolha uma data e um horario na aba Agenda para ver sua proxima sessao aqui.</string>
     <string name="confirmar_agendamento">Confirmar agendamento</string>
     <string name="dialog_confirmar_agendamento_titulo">Confirmar marcacao</string>
@@ -85,6 +92,8 @@
     <string name="agendamento_confirmado_toast">Agendamento confirmado.</string>
     <string name="whatsapp_maya_numero" translatable="false"></string>
     <string name="whatsapp_msg_confirmacao_agendamento">Ola Maya! Confirmo meu agendamento no app Maya RPG:\n%1$s as %2$s\n(ref. data: %3$s)</string>
+    <string name="comentar_post">Comentar 💬</string>
+    <string name="hint_comentario_post">Escreva seu comentario sobre este post…</string>
     <string name="exercicios_lista_vazia">Nenhum exercicio disponivel da API.</string>
     <string name="exercicios_erro_carregar">Nao foi possivel carregar exercicios. Verifique a rede e o login.</string>
     <string name="registrar_execucao">Registrar execucao (check-in)</string>

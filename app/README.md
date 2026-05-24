@@ -16,3 +16,7 @@ Abra este projeto no Android Studio por:
 
 `app/MayaRpg`
 
+## URL da API
+
+Configure `MAYA_API_BASE_URL` em `app/MayaRpg/local.properties` (emulador, Wi‑Fi local ou Cloudflare Tunnel). Detalhes em `app/MayaRpg/README.md`.
+

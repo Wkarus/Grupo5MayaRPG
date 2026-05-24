@@ -20,7 +20,11 @@ public interface PostsService {
         public String conteudo;
         @SerializedName("categoria")
         public String categoria;
-        @SerializedName("status")
-        public String status;
+        @SerializedName("tipo")
+        public String tipo;
+        @SerializedName("mediaUrl")
+        public String mediaUrl;
+        @SerializedName("audience")
+        public String audience;
     }
 }

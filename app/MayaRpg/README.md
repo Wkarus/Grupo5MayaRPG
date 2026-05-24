@@ -33,34 +33,111 @@ App mobile do projeto MayaRpg (fisioterapia + RPG), desenvolvido em Java para An
 
 **2.** Aguarde o Gradle sync.
 
-**3.** Crie o arquivo `local.properties` na raiz do projeto (se não existir) e adicione:
+**3.** Crie o arquivo `local.properties` na raiz de `app/MayaRpg` (copie de `local.properties.example` se precisar) e configure a URL da API — veja a seção [URL da API (`MAYA_API_BASE_URL`)](#-url-da-api-maya_api_base_url) abaixo.
+
+**4.** Com a API rodando (`docker compose up -d` na raiz do repositório), clique em **Run** no emulador ou dispositivo físico.
+
+**5.** Depois de mudar qualquer URL em `local.properties`, faça **Build → Rebuild Project** antes de instalar de novo no celular.
+
+---
+
+## 🌐 URL da API (`MAYA_API_BASE_URL`)
+
+O app **não escolhe a API sozinho**: a URL é gravada no build a partir de `local.properties` e vira `BuildConfig.API_BASE_URL` (usado pelo Retrofit em `network/ApiClient.java`).
+
+| Propriedade | Quando usa |
+|-------------|------------|
+| `MAYA_API_BASE_URL` | Build **debug** (Run no Android Studio) |
+| `MAYA_API_BASE_URL_RELEASE` | Build **release** (APK assinado) |
+
+Use **barra no final** (`/`). Exemplo: `https://exemplo.trycloudflare.com/`
+
+A API deste repositório, com Docker, fica em **`http://localhost:8081`** no PC (container na porta 8080).
+
+### Por que só funcionava no mesmo Wi‑Fi?
+
+Endereços como `http://192.168.x.x:8081/` são **IP da rede de casa**. O celular em 4G ou em outro Wi‑Fi **não alcança** esse IP. O emulador usa `10.0.2.2` — isso **só vale dentro do emulador**.
+
+Para usar o app **fora da sua rede**, a API precisa de um endereço **público na internet**. Opções:
+
+1. **Cloudflare Tunnel** (grátis, bom para testes) — expõe o Docker do seu PC sem abrir porta no roteador.
+2. **Mesmo Wi‑Fi** — IP local do PC (`ipconfig`).
+3. **Servidor na nuvem** — URL fixa para produção ou entrega do APK.
+
+### Opção A — Emulador (desenvolvimento)
 
 ```properties
-# Emulador apontando para o PC (Docker na porta 8081)
 MAYA_API_BASE_URL=http://10.0.2.2:8081/
 ```
 
-**4.** Clique em **Run** no emulador ou dispositivo físico.
+`10.0.2.2` é o “localhost” do PC visto pelo emulador Android.
+
+### Opção B — Celular na mesma rede Wi‑Fi
+
+```properties
+MAYA_API_BASE_URL=http://192.168.0.XXX:8081/
+```
+
+Substitua `XXX` pelo IPv4 do PC (`ipconfig` → Wi‑Fi). PC e celular na **mesma rede**.
+
+### Opção C — Celular em 4G ou outro Wi‑Fi (Cloudflare Tunnel)
+
+Com `docker compose up -d` rodando e a API em `8081`:
+
+**1.** Instale o [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) (Windows 64-bit: `cloudflared-windows-amd64.exe`).
+
+**2.** No PowerShell, **na pasta do executável** (não dê duplo clique no `.exe`):
+
+```powershell
+cd "C:\caminho\para\Cloudflare"
+.\cloudflared-windows-amd64.exe tunnel --url http://localhost:8081
+```
+
+**3.** Deixe a janela **aberta**. Copie a URL que aparecer, por exemplo:
+
+```text
+https://reflect-governing-engine-unknown.trycloudflare.com
+```
+
+**4.** Em `local.properties`:
+
+```properties
+MAYA_API_BASE_URL=https://SUA-URL.trycloudflare.com/
+MAYA_API_BASE_URL_RELEASE=https://SUA-URL.trycloudflare.com/
+```
+
+**5.** **Build → Rebuild Project** e instale o app de novo.
+
+**6.** Teste no PC: `https://SUA-URL.trycloudflare.com/health` → deve retornar `{"status":"ok"}`.
+
+| Importante | Detalhe |
+|------------|---------|
+| PC ligado | Docker + túnel precisam estar rodando enquanto usa o app |
+| URL temporária | Túnel rápido (`trycloudflare.com`) **muda** se fechar o PowerShell; atualize `local.properties` e faça rebuild |
+| Banco de dados | Continua no MySQL do Docker no seu PC; o túnel só encaminha tráfego para a API |
+| Código novo | Mudou backend → `docker compose up -d --build`; mudou app → rebuild no Android Studio |
+
+Conta Cloudflare no plano **Free** é gratuita para túnel; não é obrigatório comprar domínio para esse teste rápido.
 
 ---
 
 ## 📦 Gerar APK para outra pessoa
 
-O APK grava a URL da API no momento do build. O endereço `10.0.2.2` **só funciona no emulador** — não alcança o servidor de fora.
+O APK grava a URL no momento do build. `10.0.2.2` **só funciona no emulador**.
 
-**Antes de gerar o APK**, defina o IP/URL real em `local.properties`:
+Defina `MAYA_API_BASE_URL_RELEASE` com uma URL que o celular alcance de qualquer rede:
 
 ```properties
-# Mesma rede Wi-Fi: use o IP do PC (veja com ipconfig)
-MAYA_API_BASE_URL_RELEASE=http://192.168.X.X:8081/
+# Túnel Cloudflare (testes; URL muda ao reiniciar o túnel)
+MAYA_API_BASE_URL_RELEASE=https://SUA-URL.trycloudflare.com/
 
-# Servidor público (recomendado para distribuição)
+# Ou servidor público fixo (recomendado para distribuição)
 MAYA_API_BASE_URL_RELEASE=https://sua-api-publica.com/
 ```
 
-Depois: **Build → Generate Signed Bundle / APK** no Android Studio.
+Depois: **Build → Generate Signed Bundle / APK**.
 
-> ⚠️ A API precisa estar online e acessível para quem instalar o app.
+> ⚠️ A API (e o túnel, se usar Cloudflare) precisam estar online para quem instalar o app funcionar.
 
 ---
 

@@ -61,5 +61,18 @@
             android:text="@string/contato_maya"
             android:textAllCaps="false"
             android:textColor="@color/text_on_primary" />
+
+        <Button
+            android:id="@+id/btnVoltarLogin"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_button_primary"
+            android:backgroundTint="@null"
+            app:backgroundTint="@null"
+            android:text="@string/voltar_login"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

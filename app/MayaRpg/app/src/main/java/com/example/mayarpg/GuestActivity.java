@@ -19,7 +19,15 @@ public class GuestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_guest);
 
         Button btnContatoWhatsapp = findViewById(R.id.btnContatoWhatsapp);
+        Button btnVoltarLogin = findViewById(R.id.btnVoltarLogin);
+
         btnContatoWhatsapp.setOnClickListener(v -> openWhatsapp());
+        btnVoltarLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void openWhatsapp() {
